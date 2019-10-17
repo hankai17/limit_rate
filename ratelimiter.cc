@@ -58,15 +58,15 @@ uint64_t RateLimiter::getMaxUnits(uint64_t amount, LimiterState * state) {
     timeval elapsed;   
     timeval stime = state->time(counter_index);
     timersub(&timev, &stime, &elapsed); //当前时间 - 上次发送数据时间(copy)
-
+    //场景: 配置中配的是1MB 1000ms  意思是1000ms内必须发送1MB
     float elapsed_ms = (elapsed.tv_sec * 1000.0f) + (elapsed.tv_usec / 1000.0f);
-    float rate_timeslice = 1.0f - (limiter_entry->milliseconds() - elapsed_ms) / limiter_entry->milliseconds();
+    float rate_timeslice = 1.0f - (limiter_entry->milliseconds() - elapsed_ms) / limiter_entry->milliseconds(); //感性认识: 当前时间跟上次发送时间差值越大 则这个值越大
     if (rate_timeslice  < 0 )
         rate_timeslice = 0;
 
-    float replenishment = rate_timeslice * limiter_entry->max_rate();
+    float replenishment = rate_timeslice * limiter_entry->max_rate(); //算出本次发送量 eg:时间间隔为500ms 这里的值为0.5MB
 
-    float newallowance = state->allowance(counter_index) + replenishment;
+    float newallowance = state->allowance(counter_index) + replenishment;  //https://blog.csdn.net/sinat_24820331/article/details/75567615
 
     newallowance = newallowance > limiter_entry->max_rate() ? limiter_entry->max_rate() : newallowance;
     int rv = amount;
@@ -75,7 +75,7 @@ uint64_t RateLimiter::getMaxUnits(uint64_t amount, LimiterState * state) {
         amount = rv = newallowance;
     }
 
-    newallowance -= amount;
+    newallowance -= amount;  //如果buf里只有200K 那么剩下的300K得加到下次发送量上
 
     if (newallowance >= 0.0f) {
         state->set_allowance(counter_index, newallowance);
