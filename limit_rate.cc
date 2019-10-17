@@ -89,7 +89,7 @@ static void handle_rate_limiting_transform(TSCont contp)
 
         if (towrite > 0) {   //肯定是在transform的copy里做操作 毋庸置疑  至于拷贝多少就是限速的核心了
 
-            int64_t rl_max = data->rate_limiter->getMaxUnits(towrite,
+            int64_t rl_max = data->rate_limiter->getMaxUnits(towrite,   //towrite(参数)是buf里真实的数据大小
                     data->state);
             towrite = rl_max;
 
