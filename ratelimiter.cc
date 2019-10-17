@@ -57,7 +57,7 @@ uint64_t RateLimiter::getMaxUnits(uint64_t amount, LimiterState * state) {
     TSMutexLock(update_mutex_);
     timeval elapsed;   
     timeval stime = state->time(counter_index);
-    timersub(&timev, &stime, &elapsed); 
+    timersub(&timev, &stime, &elapsed); //当前时间 - 上次发送数据时间(copy)
 
     float elapsed_ms = (elapsed.tv_sec * 1000.0f) + (elapsed.tv_usec / 1000.0f);
     float rate_timeslice = 1.0f - (limiter_entry->milliseconds() - elapsed_ms) / limiter_entry->milliseconds();
