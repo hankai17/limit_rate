@@ -87,7 +87,7 @@ static void handle_rate_limiting_transform(TSCont contp)
         if (towrite > avail)
             towrite = avail;
 
-        if (towrite > 0) {
+        if (towrite > 0) {   //肯定是在transform的copy里做操作 毋庸置疑
 
             int64_t rl_max = data->rate_limiter->getMaxUnits(towrite,
                     data->state);
