@@ -84,3 +84,8 @@ uint64_t RateLimiter::getMaxUnits(uint64_t amount, LimiterState * state) {
     TSMutexUnlock(update_mutex_);
     return rv;
 }
+
+//感觉限速也不是很难做
+//1记录每次发送的时间  算出本次发送的标准量
+//2非常正常的场景就是本次要发送的理想值 肯定肯定肯定 不等于从os读得的值 
+//3所以要记录这个"差值"
