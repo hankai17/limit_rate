@@ -98,7 +98,7 @@ static void handle_rate_limiting_transform(TSCont contp)
                         TSVIOReaderGet(input_vio), towrite, 0);
                 TSIOBufferReaderConsume(TSVIOReaderGet(input_vio), towrite);
                 TSVIONDoneSet(input_vio, TSVIONDoneGet(input_vio) + towrite);
-            } else {
+            } else { //如果从os下的速度太大  而设置的限速又太小 就有可能拷贝的是0  所以得调schedule缓一缓 如果不调schedule呢??? 相当于把copy注掉了 回去调试一下TODO
                 TSContSchedule(contp, 100, TS_THREAD_POOL_DEFAULT);
                 return;
             }
